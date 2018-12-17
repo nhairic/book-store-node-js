@@ -1,0 +1,22 @@
+[
+  {
+    "id": "l1",
+    "name": "livre1",
+    "description": "dsqdqdqsdqd",
+    "USD_orice": 12.23,
+    "EUR_price": 10.5,
+    "file_link": "eeeeeee",
+    "creation_date": "12/12/13",
+    "orders_counter": 5
+  },
+  {
+    "id": "l3",
+    "name": "livre3",
+    "description": "tototot",
+    "USD_orice": 12.63,
+    "EUR_price": 10.51,
+    "file_link": "aaaaaa",
+    "creation_date": "12/12/13",
+    "orders_counter": 1
+  }
+]
