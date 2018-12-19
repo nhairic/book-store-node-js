@@ -80,5 +80,5 @@ function orderProductById(id, callback) {
 rl.on('line', function(line) {
     //console.log('I want product ' + line);
     let id = line.replace('i want product ', '');
-    orderProductById(id, addCOunter);
+    orderProductById(id, addCOunter);   
 })
