@@ -13,121 +13,61 @@ mongoose
     .on('error', function (err) {
         console.log('Monngose default connection error:' + err);
     })
-// Librairies
-var express = require('express');
-let ejs = require('ejs');
-var app = express();
-var Product = require('./models/Product');
-var Order = require('./models/Order');
-var User = require('./models/User');
-var ProductManager = require("./Manager/ProductManager");
-var bodyParser = require('body-parser');
-var passport = require('passport'),
-    session = require("express-session"),
-    bodyParser = require("body-parser"),
-    flash = require('connect-flash'),
-     LocalStrategy = require('passport-local').Strategy;
+/**
+ * Library
+ */
+const express = require('express');
+const ejs = require('ejs');
+const app = express();
+const routes =require('./src/routes');
+const Product = require('./models/Product');
+const Order = require('./models/Order');
+const User = require('./models/User');
+const ProductManager = require("./Manager/ProductManager");
+const bodyParser = require('body-parser');
+const passport = require('passport')
+const session = require("express-session")
+const flash = require('connect-flash')
+const LocalStrategy = require('passport-local').Strategy;
+const methodOverride = require('method-override')
+const restify = require('express-restify-mongoose')
+const router = express.Router()
+
 
 app.use(session({ secret: "xxjdhjdfshkdghkjfdghslkdhnbutspejtrpsvầesutvxou" }));
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(new LocalStrategy(
-    function (username, password, done) {
-        User.findOne({ username: username }, function (err, user) {
-            if (err) { return done(err); }
-            if (!user) {
-                return done(null, false, { message: 'Incorrect username.' });
-            }
-            if (!user.validPassword(password)) {
-                return done(null, false, { message: 'Incorrect password.' });
-            }
-            return done(null, user);
-        });
-    }
-));
 
-passport.serializeUser(function(user, done) {
-    done(null, user.id);
-  });
-  
-  passport.deserializeUser(function(id, done) {
-    User.findById(id, function(err, user) {
-      done(err, user);
-    });
-  });
+const authentifications = require('./src/authentification');
+authentifications(passport, LocalStrategy);
+
+/**
+ * Restification
+ */
+restify.serve(router, Product)
+restify.serve(router, Order)
+restify.serve(router, User)
 
 
-// les use middleware
+/**
+ * Middlewares
+ */
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
-
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: false }));
-
 app.use(flash());
-
-//User.create({'username' : 'nhairic', 'password': 'mongo'});
 
 /**
  * Config templates
  */
 app.set('view engine', 'ejs');
 
-
 /**
  * ROUTES
  */
+routes(app,passport);
 
-app.get('/', function (req, res) {
-    ProductManager.getAll(
-        function (err, Liste) {
-            res.render('index', { body: Liste, messages : req.flash('error'), user : req.user });
-        }
-    )
-});
-
-
-// app.post('/addCommand', function (req, res) {
-//     try {
-//         Product.findOneAndUpdate({ _id: req.body.id }, { $inc: { orders_counter: 1 } }, function (err, doc) {
-//             if (err) {
-//                 //res.statusCode = 403;
-//                 console.log(e);
-
-//             } else {
-//                 //res.statusCode = 403;
-//                 console.log(doc);
-//             }
-//         });
-//     } catch (e) {
-//         console.log(e);
-//     }
-
-//     res.send('');
-// });
-
-app.post('/addCommand', function (req, res) {
-    if(typeof req.user != 'undefined'){
-        ProductManager.addCommand(req, function (err, doc) {
-            res.contentType('json')
-            if (err) {
-                res.status(400);
-                res.send(JSON.stringify("un problème et survenue"));
-            } else {
-                res.status(200);
-                res.send(JSON.stringify(doc.orders_counter));
-            }
-        })
-    }else{
-        res.send(JSON.stringify("Connecter vous !"));
-    }
-});
-
-app.post('/login',
-  passport.authenticate('local', { successRedirect: '/',
-                                   failureRedirect: '/',
-                                   failureFlash: true })
-);
-
+app.use(router)
 app.listen(3000);
