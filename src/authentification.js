@@ -2,6 +2,11 @@ const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const saltRounds = 10;
 var salt = bcrypt.genSaltSync(saltRounds);
+
+//il faut mieux apeller le module que de le passer en argument
+
+
+
 class Authentification {
     constructor(passport, LocalStrategy) {
         this.passport = passport;

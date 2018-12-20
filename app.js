@@ -1,4 +1,9 @@
 //Connexion BDD
+
+/**
+ * Faire un fichier de configuration en json et le charger
+ */
+
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/workshop')
 
@@ -13,7 +18,9 @@ mongoose
     .on('error', function (err) {
         console.log('Monngose default connection error:' + err);
     })
-/**
+
+
+    /**
  * Library
  */
 const express = require('express');
@@ -47,7 +54,6 @@ authentifications(passport, LocalStrategy);
 restify.serve(router, Product)
 restify.serve(router, Order)
 restify.serve(router, User)
-
 
 /**
  * Middlewares
